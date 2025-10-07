@@ -1,13 +1,16 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from database import engine, Base, get_db
 from models import Topic, Quiz, Submission
 from pydantic import BaseModel
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
-# Create tables
+# ----- Create tables -----
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Quiz App API")
+# ----- FastAPI app -----
+app = FastAPI(title="PySQL Gym API")
 
 # ----- Pydantic Schemas -----
 class TopicCreate(BaseModel):
@@ -61,3 +64,15 @@ def create_submission(sub: SubmissionCreate, db: Session = Depends(get_db)):
 @app.get("/submissions/")
 def get_submissions(db: Session = Depends(get_db)):
     return db.query(Submission).all()
+
+# ----- UI Route for PySQL Gym -----
+# Static files & templates
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/")
+def home(request: Request):
+    """
+    Home page: PySQL Gym UI
+    """
+    return templates.TemplateResponse("index.html", {"request": request})
