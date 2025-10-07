@@ -29,7 +29,8 @@ jobs:
 
       - name: Push Docker image
         run: |
-          docker push us-central1-docker.pkg.dev/fastapi-cloudrun/fastapi-repo/fastapi-app:latest
+          docker push us-central1-docker.pkg.dev/fastapi-cloudrun-474109/fastapi-repo/fastapi-app:latest
+
 
       - name: Deploy to Cloud Run
         run: |
